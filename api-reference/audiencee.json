@@ -1,0 +1,2247 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "Audience API",
+    "description" : "The Audience API lets publishers and buyers integrate data providers with PubMatic Audiences.",
+    "version" : "1.0.0tw"
+  },
+  "servers" : [ {
+    "url" : "https://ci-va2qa-mgmt.pubmatic.com/audience",
+    "description" : "CI",
+    "variables" : { }
+  } ],
+  "tags" : [ {
+    "name" : "Single audience endpoints"
+  } ],
+  "paths" : {
+    "/dataUsage" : {
+      "get" : {
+        "tags" : [ "Audience reporting API" ],
+        "summary" : "Data usage by deal and audience",
+        "description" : "Returns aggregated data breakdown by deal and segment.",
+        "operationId" : "getDataUsage",
+        "parameters" : [ {
+          "name" : "pubToken",
+          "in" : "header",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "audienceDataUsageCriteria",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/DataUsageCriteriaSwagger"
+          }
+        }, {
+          "name" : "orderBy",
+          "in" : "query",
+          "description" : "The column that determines the response sort order. Pass in the name of the column you want to sort by",
+          "schema" : {
+            "type" : "string"
+          },
+          "example" : "dataRevenue"
+        }, {
+          "name" : "order",
+          "in" : "query",
+          "description" : "Determines whether the data is sorted ascending (ASC = default) or descending (DESC)",
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "DESC", "ASC" ]
+          },
+          "example" : "ASC"
+        }, {
+          "name" : "pager",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/PagerSwagger"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Audiences data usage",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DataUsageSwagger"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid PubToken",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/APIError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dataUsage/aggregate" : {
+      "get" : {
+        "tags" : [ "Audience reporting API" ],
+        "summary" : "Audience data usage summary",
+        "description" : "Returns aggregated data breakdown by deal and segment.",
+        "operationId" : "getTotalDataUsage",
+        "parameters" : [ {
+          "name" : "pubToken",
+          "in" : "header",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "audienceDataUsageCriteria",
+          "in" : "query",
+          "explode" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/DataUsageCriteriaSwagger"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Audiences data usage summary",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DataUsageTotalsSwagger"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid PubToken",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/APIError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dataUsage/export" : {
+      "get" : {
+        "tags" : [ "Audience reporting API" ],
+        "summary" : "Export data usage",
+        "description" : "Returns daily or aggregated data containing all details:\n* **Dimensions:** deal, audience name, publisher, buyer, DSP, ad format, deal type, and platform.\n * **Metrics:** paid impressions, spend, data spend",
+        "operationId" : "getDataUsageExported",
+        "parameters" : [ {
+          "name" : "pubToken",
+          "in" : "header",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "audienceDataUsageCriteria",
+          "in" : "query",
+          "explode" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/DataUsageCriteriaSwagger"
+          }
+        }, {
+          "name" : "contentType",
+          "in" : "header",
+          "description" : "Add this header if you want to get the response in CSV format. Omitting this header returns a JSON response.",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "In CSV format, the first row is the name of the report, the second row contains the column names, and all subsequent rows are the report data, with each column's data separated by a comma.\n**Sample CSV response**,\n```\n\"Data Usage Report Daily\"\n\"Deal Id\",\"Deal Name\",\"Source Segment Id\",\"Audience Name\",\"Publisher\",\"Buyer\",\"DSP\",\"Ad Format\",\"Platform\",\"Paid Impressions\",\"Total Spend ($)\",\"Total Data Revenue ($)\",\"Deal Type\"\n\"PM-JHDN-8987\",\"DEAL_NAME_RETRACTED\",\"id_123\",\"PUB_NAME_RETRACTED\",\"Buyer name\",\"DSP name\",\"Display\",\"Mobile Web\",\"66008\",\"305.53\",\"125.42\",\"Auction Packages\"```",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DataUsageSwagger"
+                }
+              },
+              "application/pdf" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DataUsageSwagger"
+                }
+              },
+              "application/vnd.ms-excel" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DataUsageSwagger"
+                }
+              },
+              "text/csv" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DataUsageSwagger"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid PubToken",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/APIError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/audiences" : {
+      "get" : {
+        "tags" : [ "Single audience endpoints" ],
+        "summary" : "Get a list of audiences",
+        "description" : "Get a list of audiences registered under the same account on the PubMatic platform.",
+        "operationId" : "getAudiences",
+        "parameters" : [ {
+          "name" : "pubToken",
+          "in" : "header",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "audienceCriteria",
+          "in" : "query",
+          "explode" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/AudienceGetListSwagger"
+          }
+        }, {
+          "name" : "orderBy",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "order",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "DESC", "ASC" ]
+          }
+        }, {
+          "name" : "pager",
+          "in" : "query",
+          "explode" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/PagerSwagger"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "List of Audiences ",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Audience"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid PubToken",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/APIError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "Single audience endpoints" ],
+        "summary" : "Register a new audience",
+        "description" : "First-party data providers (DMPs) who integrate directly with PubMatic can register audiences by providing the accountType parameter as PUBLISHER, BUYER, or DEMAND_PARTNER along with their PubMatic accountId. For data provider accounts, accountType should be BUYER.",
+        "operationId" : "createAudience",
+        "parameters" : [ {
+          "name" : "pubToken",
+          "in" : "header",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "Audience Request Body",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AudienceCreateSwagger"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Audience Created",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Audience"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid PubToken",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/APIError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/audiences/{audienceId}" : {
+      "get" : {
+        "tags" : [ "Single audience endpoints" ],
+        "summary" : "Get audience details",
+        "description" : "Get the details for a specific audience on the PubMatic platform.",
+        "operationId" : "getAudience",
+        "parameters" : [ {
+          "name" : "pubToken",
+          "in" : "header",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "audienceId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "audience",
+          "in" : "query",
+          "description" : "Query Parameter",
+          "explode" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/AudienceGetSwagger"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Audiences details",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Audience"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid PubToken",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/APIError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch" : {
+        "tags" : [ "Single audience endpoints" ],
+        "summary" : "Update an audience",
+        "description" : "\nBefore you begin:\n* Use this method to modify: name, description, price, and enabled (active) flag. Clients can pass any of these four fields along with all required parameters.\n* Do not use this API to modify custom boolean audiences created with audiences of more than one data provider. These audiences are immutable and can't be updated due to access control restrictions.\n",
+        "operationId" : "patchAudience",
+        "parameters" : [ {
+          "name" : "pubToken",
+          "in" : "header",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "audienceId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "Audience Request Body",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AudienceUpdateSwagger"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Audience Updated",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Audience"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid PubToken",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/APIError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/audiences/downloadCreateAudienceTemplate" : {
+      "get" : {
+        "tags" : [ "Bulk audience endpoints" ],
+        "summary" : "Create audience template",
+        "description" : "Use this API to download a CSV template that lets you create audiences in bulk. Some highlights of this template:\n* The template row header describes the data for each column.\n * The file also contains information for each of the audiences within the account.\n* Each row represents an audience.\n* Publishers can download the template, fill in a row for each audience to be created, and upload it using the Audience UI.\n* Once uploaded, the audiences are updated asynchronously.",
+        "operationId" : "downloadCreateAudienceTemplate",
+        "parameters" : [ {
+          "name" : "pubToken",
+          "in" : "header",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "accountId",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "fileType",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "CSV", "PDF", "XLS_SIMPLE", "XLSX" ]
+          }
+        }, {
+          "name" : "category",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "THIRD_PARTY_AUDIENCE", "SELLER_DEFINED_AUDIENCE", "CONTEXTUAL_AUDIENCE" ]
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "| PARAMETER        \t\t| DESCRIPTION |\n| ---------------- \t\t| ------------|\n| Data Provider ID         | Required    |\n| PubMatic Audience ID     | Returns blank on Create |\n| Source Audience ID       | Required \t  |\n| Audience Name            | Required    |\n| PubMatic Account ID      | Required    |\n| Data Price               | CPM in USD |\n| Enabled?                 | Y/N |\n| Source Client ID         | Required if account ID is blank |\n| Comments                 | Displays failure reason(s)|"
+          },
+          "400" : {
+            "description" : "Invalid PubToken",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/APIError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/audiences/downloadUpdateAudienceTemplate" : {
+      "get" : {
+        "tags" : [ "Bulk audience endpoints" ],
+        "summary" : "Update audience template",
+        "description" : "Use this API to download a CSV template that lets you update audiences in bulk. Some highlights of this template:\n* The template row header describes the data for each column.\n * The file also contains information for each of the audiences within the account.\n* Each row represents an audience.\n* Publishers can download the template, fill in a row for each audience to be created, and upload it using the Audience UI.\n* Once uploaded, the audiences are updated asynchronously.",
+        "operationId" : "downloadUpdateAudienceTemplate",
+        "parameters" : [ {
+          "name" : "pubToken",
+          "in" : "header",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "audienceCriteria",
+          "in" : "query",
+          "explode" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/AudienceTemplateCriteriaSwagger"
+          }
+        }, {
+          "name" : "fileType",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "CSV", "PDF", "XLS_SIMPLE", "XLSX" ]
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "| PARAMETER        \t\t| DESCRIPTION |\n| ---------------- \t\t| ------------|\n| Data Provider ID         | Required    |\n| PubMatic Audience ID     | Returns blank on Create |\n| Source Audience ID       | Required \t  |\n| Audience Name            | Required    |\n| PubMatic Account ID      | Required    |\n| Data Price               | CPM in USD |\n| Enabled?                 | Y/N |\n| Source Client ID         | Required if account ID is blank |\n| Comments                 | Displays failure reason(s)|"
+          },
+          "400" : {
+            "description" : "Invalid PubToken",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/APIError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dataProviders/{dataProviderId}" : {
+      "get" : {
+        "tags" : [ "Data Provider API" ],
+        "summary" : "Retrieve data provider information",
+        "description" : "This API method allows you to retrieve data provider Integration information for a specific data provider ID on the PubMatic platform.",
+        "operationId" : "getDataProvider",
+        "parameters" : [ {
+          "name" : "pubToken",
+          "in" : "header",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "dataProviderId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Data provider details",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DataProviderResponseSwagger"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid PubToken",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/APIError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "Data Provider API" ],
+        "summary" : "Modify an existing data provider",
+        "description" : "This API method allows you to modify an existing data provider integration on the PubMatic platform.",
+        "operationId" : "updateDataProvider",
+        "parameters" : [ {
+          "name" : "pubToken",
+          "in" : "header",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "dataProviderId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "Data Provider Request Body",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/DataProviderRequestUpdateSwagger"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Data Provider Updated",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DataProviderResponseSwagger"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid PubToken",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/APIError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dataProviders" : {
+      "post" : {
+        "tags" : [ "Data Provider API" ],
+        "summary" : "Register a new data provider",
+        "description" : "This API method lets you create a new data provider on the PubMatic platform.",
+        "operationId" : "createDataProvider",
+        "parameters" : [ {
+          "name" : "pubToken",
+          "in" : "header",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "Data Provider Request Body",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/DataProviderRequestCreateSwagger"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Data Provider Created",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DataProviderResponseSwagger"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid PubToken",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/APIError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sharedAudiences/bulk" : {
+      "post" : {
+        "tags" : [ "Shared audience endpoints" ],
+        "summary" : "Share audiences",
+        "description" : "Sharing audiences owned by your account makes them available in PMP deals for publishers and Auction Package deals for buyers. Data for shared audiences also appear on audience discovery and insight reports. You can share audiences to:\n* All\n* List of Publishers\n* List of Buyers\n* List of Demand Partners\n\nYou must set share permissions at the source level to share your audiences. After sharing a particular audience with one or more accounts, the other accounts can target your shared audiences in their deals",
+        "operationId" : "shareAudiences",
+        "parameters" : [ {
+          "name" : "pubToken",
+          "in" : "header",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "Share Audience Request Body",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/components/schemas/SharedAudienceSwagger"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Audience Shared",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/SharedAudienceSwagger"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid PubToken",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/APIError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sharedAudiences" : {
+      "get" : {
+        "tags" : [ "Shared audience endpoints" ],
+        "summary" : "Get shared audiences",
+        "description" : "Get the list of audiences that have been shared with your account. Other accounts can share audiences with your account either individually or in bulk.",
+        "operationId" : "getSharedAudiences",
+        "parameters" : [ {
+          "name" : "pubToken",
+          "in" : "header",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "sharedAudienceCriteria",
+          "in" : "query",
+          "explode" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/SharedAudienceCriteriaSwagger"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Audience Shared List",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/SharedAudienceSwagger"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid PubToken",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/APIError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "DataUsageSwagger" : {
+        "type" : "object",
+        "properties" : {
+          "dealMetaId" : {
+            "type" : "integer",
+            "description" : "The deal's meta ID.",
+            "format" : "int64"
+          },
+          "dealId" : {
+            "type" : "string",
+            "description" : "The deal's PubMatic ID."
+          },
+          "dealName" : {
+            "type" : "string",
+            "description" : "The name assigned by the deal's creator during the configuration and creation process."
+          },
+          "audienceName" : {
+            "type" : "string",
+            "description" : "The name of the winning audience."
+          },
+          "winningDealSegmentId" : {
+            "type" : "string",
+            "description" : "The deal's winning audience ID (source segment ID)."
+          },
+          "paidImpressions" : {
+            "type" : "integer",
+            "description" : "The audience's total paid impressions.",
+            "format" : "int64"
+          },
+          "dataRevenue" : {
+            "type" : "number",
+            "description" : "The audience's data revenue (USD).",
+            "format" : "double"
+          },
+          "campaignSpend" : {
+            "type" : "number",
+            "description" : "Total spend in USD (media + data).",
+            "format" : "double"
+          },
+          "impressionEcpm" : {
+            "type" : "number",
+            "description" : "The eCPM per impression (USD).",
+            "format" : "double"
+          },
+          "dataEcpm" : {
+            "type" : "number",
+            "description" : "CPM from data revenue (dataRevenue/paidImpressions * 1000).",
+            "format" : "double"
+          },
+          "publisherName" : {
+            "type" : "string",
+            "description" : "The publisher's name."
+          },
+          "buyerName" : {
+            "type" : "string",
+            "description" : "The buyer's name."
+          },
+          "dspName" : {
+            "type" : "string",
+            "description" : "The DSP's name."
+          },
+          "platformName" : {
+            "type" : "string",
+            "description" : "he platform on which the impression was served.",
+            "enum" : [ "web", "mobile web", "mobile app", "android", "mobile app ios", "CTV" ]
+          }
+        }
+      },
+      "APIError" : {
+        "type" : "object",
+        "properties" : {
+          "errorCode" : {
+            "type" : "string"
+          },
+          "errorMessage" : {
+            "type" : "string"
+          }
+        }
+      },
+      "AudienceDataUsage" : {
+        "type" : "object",
+        "properties" : {
+          "date" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "dealMetaId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "dealId" : {
+            "type" : "string"
+          },
+          "dealName" : {
+            "type" : "string"
+          },
+          "dealType" : {
+            "type" : "string"
+          },
+          "targettedDealId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "targettedDealName" : {
+            "type" : "string"
+          },
+          "audienceName" : {
+            "type" : "string"
+          },
+          "pubmaticBuyerId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "derivedDspId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "publisherId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "publisherName" : {
+            "type" : "string"
+          },
+          "buyerName" : {
+            "type" : "string"
+          },
+          "dspName" : {
+            "type" : "string"
+          },
+          "winningDealDataProviderId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "winningDealSegmentId" : {
+            "type" : "string"
+          },
+          "winningDealSegmentMargin" : {
+            "type" : "string"
+          },
+          "derivedAdFormatId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "platformId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "paidImpressions" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "winningDealSegmentPrice" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "publisherRevenue" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "dataRevenue" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "campaignSpend" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "impressionEcpm" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "dataEcpm" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "adTypeName" : {
+            "type" : "string"
+          },
+          "platformName" : {
+            "type" : "string"
+          },
+          "queryInfix" : {
+            "type" : "string"
+          },
+          "audienceExpression" : {
+            "type" : "string"
+          },
+          "sdaId" : {
+            "type" : "string"
+          },
+          "transactionRecipientName" : {
+            "type" : "string"
+          },
+          "transactionCpm" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "transactionRevenue" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "transactionFeeType" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PageSupporterAudienceDataUsage" : {
+        "type" : "object",
+        "properties" : {
+          "metaData" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "object"
+            }
+          },
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/AudienceDataUsage"
+            }
+          }
+        }
+      },
+      "DataUsageCriteriaSwagger" : {
+        "required" : [ "accountId", "accountType", "dataUsageReportType" ],
+        "type" : "object",
+        "properties" : {
+          "dataUsageReportType" : {
+            "type" : "string",
+            "description" : "Pass following values to request various date ranges",
+            "enum" : [ "YESTERDAY", "LAST_WEEK", "LAST_30_DAYS", "LAST_MONTH", "CUSTOM_RANGE" ]
+          },
+          "accountId" : {
+            "type" : "integer",
+            "description" : "Buyer's numeric account ID.",
+            "format" : "int64"
+          },
+          "accountType" : {
+            "type" : "string",
+            "description" : "Value is always: BUYER",
+            "enum" : [ "BUYER" ]
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "Select a category of the audience.",
+            "enum" : [ "THIRD_PARTY_AUDIENCE", "SELLER_DEFINED_AUDIENCE", "CONTEXTUAL_AUDIENCE" ]
+          },
+          "liveDeals" : {
+            "type" : "boolean",
+            "description" : "TRUE - returns only revenue from deals that are currently active. \nFALSE - returns revenue for all deals, including those that are completed or paused."
+          },
+          "dayLevel" : {
+            "type" : "boolean",
+            "description" : "TRUE - returns daily numbers. \n FALSE - returns aggregated numbers",
+            "default" : false
+          },
+          "date" : {
+            "type" : "string",
+            "description" : "Use with CUSTOM_RANGE report type to return a single date (in YYYY-MM-DD format).",
+            "format" : "date-time"
+          },
+          "fromReportDate" : {
+            "type" : "string",
+            "description" : "Start date (PST). Use with CUSTOM_RANGE report type to set the query start date (in YYYY-MM-DD format)",
+            "format" : "date-time"
+          },
+          "toReportDate" : {
+            "type" : "string",
+            "description" : "End date (PST). Use with CUSTOM_RANGE report type to set the query end date (in YYYY-MM-DD format).",
+            "format" : "date-time"
+          }
+        }
+      },
+      "PagerSwagger" : {
+        "type" : "object",
+        "properties" : {
+          "pageSize" : {
+            "type" : "integer",
+            "description" : "The maximum number of rows to be included in the response.",
+            "format" : "int32",
+            "default" : 5
+          },
+          "pageNumber" : {
+            "type" : "integer",
+            "description" : "Page number to fetch multiple-page results.",
+            "format" : "int32",
+            "default" : 1
+          }
+        }
+      },
+      "DataUsageTotalsSwagger" : {
+        "type" : "object",
+        "properties" : {
+          "totalImpressions" : {
+            "type" : "integer",
+            "description" : "Total impressions, based on the account ID, type, and deals criteria.",
+            "format" : "int64"
+          },
+          "totalSpend" : {
+            "type" : "number",
+            "description" : "Total spend based on the same criteria as totalImpressions.",
+            "format" : "double"
+          },
+          "totalDataSpend" : {
+            "type" : "number",
+            "description" : "Total data spend based on the same criteria as totalImpressions.",
+            "format" : "double"
+          }
+        }
+      },
+      "AudienceDataUsageTotals" : {
+        "type" : "object",
+        "properties" : {
+          "totalImpressions" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "totalSpend" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "totalDataSpend" : {
+            "type" : "number",
+            "format" : "double"
+          }
+        }
+      },
+      "AudienceCreateSwagger" : {
+        "required" : [ "accountId", "accountType", "name" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "maxLength" : 256,
+            "type" : "string",
+            "description" : "The name of the new audience",
+            "example" : "Automobile Buyers"
+          },
+          "accountId" : {
+            "type" : "integer",
+            "description" : "ID of a PubMatic account",
+            "format" : "int64"
+          },
+          "accountType" : {
+            "type" : "string",
+            "description" : "PubMatic account type",
+            "example" : "PUBLISHER",
+            "enum" : [ "PUBLISHER", "BUYER", "DEMAND_PARTNER" ]
+          },
+          "providerAudienceId" : {
+            "type" : "string",
+            "description" : "Unique ID for the provider's audience."
+          },
+          "transferCode" : {
+            "type" : "string",
+            "description" : "Always set to the data provider's audience ID."
+          },
+          "definition" : {
+            "maxLength" : 1024,
+            "type" : "string",
+            "description" : "This is the rule data provider's platform for an audience. Doesn't have any meaning on PubMatic's platform other than a textual description of an audience rule."
+          },
+          "description" : {
+            "maxLength" : 1024,
+            "type" : "string",
+            "description" : "An optional description of the purpose, target, and any other relevant information about an audience."
+          },
+          "queryInfix" : {
+            "type" : "string",
+            "description" : "Required if the audience being created is a custom boolean audience; that is, an audience composed of multiple audiences governed by AND/OR logic."
+          },
+          "enabled" : {
+            "type" : "integer",
+            "description" : "Sets the audience to either active (1) or inactive (0). If 0, the audience is unavailable to use in deals or rules.  Note: deactivating an audience permanently deletes all of the audience data.",
+            "format" : "int32",
+            "default" : 1
+          },
+          "price" : {
+            "type" : "number",
+            "description" : "If any entity (Publisher, DSP, or Buyer) wants to sell their audience, this param specifies the sale price. The value must be greater than or equal to 0 else it will default to 0.",
+            "format" : "double",
+            "default" : 0
+          },
+          "dataProviderId" : {
+            "type" : "string",
+            "description" : "PubMatic's unique identifier for the provider supplies the data for an account."
+          }
+        }
+      },
+      "Audience" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "longName" : {
+            "type" : "string"
+          },
+          "accountId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "accountName" : {
+            "type" : "string"
+          },
+          "accountType" : {
+            "type" : "string",
+            "enum" : [ "PUBLISHER", "DATA_PROVIDER_CLIENT", "BUYER", "DEMAND_PARTNER" ]
+          },
+          "providerAudienceId" : {
+            "type" : "string"
+          },
+          "parentAudienceId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "transferCode" : {
+            "type" : "string"
+          },
+          "dataTypeId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "definition" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "queryPostfix" : {
+            "type" : "string"
+          },
+          "queryInfix" : {
+            "type" : "string"
+          },
+          "uniqueAudiences" : {
+            "type" : "string"
+          },
+          "clientId" : {
+            "type" : "string"
+          },
+          "enabled" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "audienceGroupId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "creationTime" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "modificationTime" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "activationDate" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "favourite" : {
+            "type" : "string",
+            "enum" : [ "TRUE", "FALSE" ]
+          },
+          "dealCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "price" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "skipDealCheck" : {
+            "type" : "boolean"
+          },
+          "errors" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/APIError"
+            }
+          },
+          "errorMessages" : {
+            "type" : "string"
+          },
+          "skipChangeCheck" : {
+            "type" : "boolean"
+          },
+          "type" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "isEnabled" : {
+            "type" : "string"
+          },
+          "alwaysOn" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "alwaysOnString" : {
+            "type" : "string"
+          },
+          "isAutoRegistered" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "priceModificationTime" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "isAutoDisabled" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "isDeleted" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "category" : {
+            "type" : "string",
+            "enum" : [ "THIRD_PARTY_AUDIENCE", "SELLER_DEFINED_AUDIENCE", "CONTEXTUAL_AUDIENCE" ]
+          },
+          "sellerDefinedAudiences" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SellerDefinedAudience"
+            }
+          },
+          "accountTypeId" : {
+            "type" : "integer",
+            "format" : "int64",
+            "writeOnly" : true
+          },
+          "private" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "enabledForAIMTag" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "categoryId" : {
+            "type" : "integer",
+            "format" : "int32",
+            "writeOnly" : true
+          },
+          "dataProviderId" : {
+            "type" : "string"
+          },
+          "dataProviderName" : {
+            "type" : "string"
+          },
+          "flattened_complex_expression" : {
+            "type" : "string"
+          }
+        }
+      },
+      "SellerDefinedAudience" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "audienceId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "sdaId" : {
+            "type" : "string"
+          },
+          "publisherId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "price" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "deleted" : {
+            "type" : "string",
+            "enum" : [ "TRUE", "FALSE" ]
+          },
+          "publisherName" : {
+            "type" : "string"
+          },
+          "searchKey" : {
+            "type" : "string"
+          },
+          "errors" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/APIError"
+            }
+          },
+          "errorMessages" : {
+            "type" : "string"
+          },
+          "deletedId" : {
+            "type" : "integer",
+            "format" : "int32",
+            "writeOnly" : true
+          }
+        }
+      },
+      "AudienceUpdateSwagger" : {
+        "required" : [ "accountId", "accountType", "dataProviderId", "id", "name" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "The PubMatic Audience ID"
+          },
+          "name" : {
+            "maxLength" : 256,
+            "type" : "string",
+            "description" : "The name of the new audience",
+            "example" : "Automobile Buyers"
+          },
+          "accountId" : {
+            "type" : "integer",
+            "description" : "ID of a PubMatic account",
+            "format" : "int64"
+          },
+          "accountType" : {
+            "type" : "string",
+            "description" : "PubMatic account type",
+            "example" : "PUBLISHER",
+            "enum" : [ "PUBLISHER", "BUYER", "DEMAND_PARTNER" ]
+          },
+          "description" : {
+            "maxLength" : 1024,
+            "type" : "string",
+            "description" : "An optional description of the purpose, target, and any other relevant information about an audience."
+          },
+          "enabled" : {
+            "type" : "integer",
+            "description" : "Sets the audience to either active (1) or inactive (0). If 0, the audience is unavailable to use in deals or rules.  Note: deactivating an audience permanently deletes all of the audience data.",
+            "format" : "int32",
+            "default" : 1
+          },
+          "isDeleted" : {
+            "type" : "integer",
+            "description" : "Admin and audience owners can use this call to flag an audience as deleted ( 1 ) or not deleted (0 ). If 1, the audience is deleted. Note: audiences are deleted only after they have been inactive > 90 days.",
+            "format" : "int32",
+            "default" : 0
+          },
+          "price" : {
+            "type" : "number",
+            "description" : "If any entity (Publisher, DSP, or Buyer) wants to sell their audience, this param specifies the sale price. The value must be greater than or equal to 0 else it will default to 0.",
+            "format" : "double",
+            "default" : 0
+          },
+          "dataProviderId" : {
+            "type" : "string",
+            "description" : "PubMatic's unique identifier for the provider supplies the data for an account."
+          }
+        }
+      },
+      "PageSupporterAudience" : {
+        "type" : "object",
+        "properties" : {
+          "metaData" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "object"
+            }
+          },
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Audience"
+            }
+          }
+        }
+      },
+      "AudienceGetListSwagger" : {
+        "required" : [ "accountId", "accountType" ],
+        "type" : "object",
+        "properties" : {
+          "accountId" : {
+            "type" : "integer",
+            "description" : "ID of a PubMatic account",
+            "format" : "int64"
+          },
+          "accountType" : {
+            "type" : "string",
+            "description" : "PubMatic account type",
+            "example" : "PUBLISHER",
+            "enum" : [ "PUBLISHER", "BUYER", "DEMAND_PARTNER" ]
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "ID of audience."
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "Name of audience."
+          },
+          "serachKey" : {
+            "type" : "string",
+            "description" : "The search string matches on the name or ID of an audience."
+          },
+          "dataProviderId" : {
+            "type" : "string",
+            "description" : "PubMatic's unique identifier for the provider who supplies the data for an account."
+          },
+          "providerAudienceId" : {
+            "type" : "string",
+            "description" : "Unique ID for the provider's audience."
+          },
+          "enabled" : {
+            "type" : "integer",
+            "description" : "Sets the audience to either active (1) or inactive (0). If 0, the audience is unavailable to use in deals or rules.  Note: deactivating an audience permanently deletes all of the audience data.",
+            "format" : "int32",
+            "default" : 1
+          },
+          "baseAudience" : {
+            "type" : "integer",
+            "description" : "1 = standard audience, 0 = custom boolean audience. Standard audiences have no AND/OR logic rules; for example, \"Males, Females\". Custom boolean audiences are made of multiple audiences, governed by AND/OR logic; for example, \"Males AND New York residents AND age group 20-30\"",
+            "format" : "int32"
+          },
+          "audienceType" : {
+            "type" : "array",
+            "description" : "Accepts multiple audience types.",
+            "items" : {
+              "type" : "string",
+              "description" : "Accepts multiple audience types.",
+              "default" : "MY_AUDIENCE",
+              "enum" : [ "MY_AUDIENCE", "SHARED_AUDIENCE", "ALL_AUDIENCE" ]
+            },
+            "default" : "MY_AUDIENCE",
+            "enum" : [ "MY_AUDIENCE", "SHARED_AUDIENCE", "ALL_AUDIENCE" ]
+          },
+          "dataProviderOrganizationName" : {
+            "type" : "string",
+            "description" : "Name of the data provider organization."
+          },
+          "dataProviderOrganizationId" : {
+            "type" : "integer",
+            "description" : "The ID of the data provider organization.",
+            "format" : "int64"
+          }
+        }
+      },
+      "AudienceGetSwagger" : {
+        "required" : [ "accountId", "accountType" ],
+        "type" : "object",
+        "properties" : {
+          "accountId" : {
+            "type" : "integer",
+            "description" : "ID of a PubMatic account",
+            "format" : "int64"
+          },
+          "accountType" : {
+            "type" : "string",
+            "description" : "PubMatic account type",
+            "example" : "PUBLISHER",
+            "enum" : [ "PUBLISHER", "BUYER", "DEMAND_PARTNER" ]
+          },
+          "dataProviderId" : {
+            "type" : "string",
+            "description" : "PubMatic's unique identifier for the provider who supplies the data for an account."
+          }
+        }
+      },
+      "AudienceTemplateCriteriaSwagger" : {
+        "type" : "object",
+        "properties" : {
+          "accountId" : {
+            "type" : "integer",
+            "description" : "PubMatic account ID",
+            "format" : "int64"
+          },
+          "accountType" : {
+            "type" : "string",
+            "description" : "PubMatic account type"
+          }
+        }
+      },
+      "DataProviderAccountSwagger" : {
+        "required" : [ "id", "type" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "description" : "ID of account on PubMatic platform.Possible values are: 1 (if a first-party data provider being created) and 0 (if a third-party data provider is being created).The id is mandatory if the FPDP value is set to 1. In these cases, the account id must be a valid ID on PubMatic platform.",
+            "format" : "int32"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "Type of account on PubMatic platform.",
+            "example" : "PUBLISHER",
+            "enum" : [ "PUBLISHER", "BUYER", "DEMAND_PARTNER" ]
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "Name of the account on the PubMatic platform",
+            "readOnly" : true,
+            "example" : "Company-123"
+          }
+        },
+        "description" : "Accounts linked to this data provider. Response would have non zero account ID for third-party data provider, if request query parameters account ID and account type are passed. If these two parameters are not passed, third-party data provider would have publisher ID 0."
+      },
+      "DataProviderOrganizationSwagger" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "description" : "ID of data provider organization",
+            "format" : "int64"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "Name of the data provider organization"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "More information about the data provider organization",
+            "readOnly" : true
+          }
+        },
+        "description" : "Information about the DMP (data management partner) of the integration."
+      },
+      "DataProviderPixelSwagger" : {
+        "required" : [ "pixelType", "url", "urlType" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "description" : "ID of data provider pixel.",
+            "format" : "int64",
+            "readOnly" : true
+          },
+          "dataProviderId" : {
+            "type" : "integer",
+            "description" : "Publisher account linked to this data provider. Publisher ID would be 0 for third party data provider.Response would have non zero publisher ID for third party data provider, if request query parameters account ID and account type are passed.If these two parameters are no passed, third part data provider would have publisher ID 0.",
+            "format" : "int64",
+            "readOnly" : true
+          },
+          "url" : {
+            "type" : "string",
+            "description" : "This is the pixel URL."
+          },
+          "frequency" : {
+            "type" : "integer",
+            "description" : "Frequency determines how many times in a day the pixel would be fired. For example, if frequency is set to 1, the pixel would fire once per day per user.",
+            "format" : "int32",
+            "default" : 0
+          },
+          "pixelType" : {
+            "$ref" : "#/components/schemas/DataProviderPixelTypeSwagger"
+          },
+          "urlType" : {
+            "$ref" : "#/components/schemas/DataProviderURLTypeSwagger"
+          }
+        },
+        "description" : "List of data provider pixels. Pixels can be UID sync-up pixel and data transfer pixel."
+      },
+      "DataProviderPixelTypeSwagger" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "description" : "ID of pixel type",
+            "format" : "int32"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "Pixel type name (e.g., IMAGE, JAVA SCRIPT, IFrame)"
+          }
+        },
+        "description" : "Type of the pixel like UID Sync-up pixel and data transfer pixel. Please see below table for object structure."
+      },
+      "DataProviderResponseSwagger" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "description" : "ID of data provider.",
+            "format" : "int64",
+            "readOnly" : true
+          },
+          "accounts" : {
+            "type" : "array",
+            "description" : "Accounts linked to this data provider. Response would have non zero account ID for third-party data provider, if request query parameters account ID and account type are passed. If these two parameters are not passed, third-party data provider would have publisher ID 0.",
+            "items" : {
+              "$ref" : "#/components/schemas/DataProviderAccountSwagger"
+            }
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "Name of the data provider."
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "Category of the audience. All audiences that are allowed to be created will match the category of the dataProviderId. Seller Defined Audiences are limited to only one per dataProviderId.",
+            "enum" : [ "THIRD_PARTY_AUDIENCE", "SELLER_DEFINED_AUDIENCE", "CONTEXTUAL_AUDIENCE" ]
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "Description of the data provider."
+          },
+          "fpdp" : {
+            "type" : "integer",
+            "description" : "This flag that indicates if data provider is first-party or third-party. First-party data providers are registered separately for every publisher integration (e.g. Krux). Third-party data providers are registered once and this applies across all publisher integration (e.g. Lotame).",
+            "format" : "int32"
+          },
+          "enabled" : {
+            "type" : "integer",
+            "description" : "This flag indicates whether the data provider is enabled or not.",
+            "format" : "int32"
+          },
+          "pushEnabled" : {
+            "type" : "integer",
+            "description" : "This flag stores the ingestion status for the data provider.\n 1 = all HTTP requests for this DPID will be accepted,\n 0 = HTTP requests sent by third-party data providers will not be ingested",
+            "format" : "int32",
+            "default" : 0
+          },
+          "privacyPolicyUrl" : {
+            "type" : "string",
+            "description" : "If the data provider is included in a universal pixel being created, then the privacyPolicyUrl of the data provider must be accepted in order to proceed with the universal pixel creation."
+          },
+          "visible" : {
+            "type" : "integer",
+            "description" : "This flag decides if a data provider should be visible on the publisher UI for operations like creating universal pixel, etc.\nSometime while integrating with a data provider, the registration is complete but the S2S integration/UID sync-up setup part is pending. Such data providers shouldn't be used to create universal pixels unless all integration steps are done.",
+            "format" : "int32"
+          },
+          "dataProviderPixels" : {
+            "type" : "array",
+            "description" : "List of data provider pixels. Pixels can be UID sync-up pixel and data transfer pixel.",
+            "items" : {
+              "$ref" : "#/components/schemas/DataProviderPixelSwagger"
+            }
+          },
+          "dataProviderOrganization" : {
+            "$ref" : "#/components/schemas/DataProviderOrganizationSwagger"
+          },
+          "dataProviderSettings" : {
+            "$ref" : "#/components/schemas/DataProviderSettingsSwagger"
+          },
+          "segmentCount" : {
+            "type" : "integer",
+            "description" : "The number of segments created under the data provider integration.",
+            "format" : "int64"
+          },
+          "modificationTime" : {
+            "type" : "string",
+            "description" : "Timestamp to track the last modification time of the data provider.",
+            "format" : "date-time",
+            "readOnly" : true
+          },
+          "creationTime" : {
+            "type" : "string",
+            "description" : "Timestamp for when the data provider was created.",
+            "format" : "date-time",
+            "readOnly" : true
+          }
+        }
+      },
+      "DataProviderSettingsSwagger" : {
+        "type" : "object",
+        "properties" : {
+          "monitoringEnabled" : {
+            "type" : "string",
+            "description" : "This setting is related to data ingestion. If monitoring is enabled, the ad server will log information about the requests sent to PubMatic. These logs can further be used for debug purpose. Monitoring is usually enabled during the integration phase of a data provider.",
+            "enum" : [ "TRUE", "FALSE" ]
+          },
+          "sharePermission" : {
+            "type" : "string",
+            "description" : "Possible values are NONE, ALL_BUYERS_DSPS, ALL_PUBLISHERS and ALL. Flag to indicate the permission on sharing of audience with other accounts. The account will only be able to share their audiences with other Publishers / DSPs / Buyers if they have permission to share audiences with that entity. Ex If share permission is set to PUBLISHER, the account will not be able to share their audience with buyer/DSP.",
+            "enum" : [ "NONE", "ALL_BUYERS_DSPS", "ALL_PUBLISHERS", "ALL" ]
+          },
+          "uidType" : {
+            "type" : "string",
+            "description" : "Possible values are COOKIE and DEVICE. Flag to indicate if the integration is for device (Android / IOS) targeting or for browser targeting. If uidType is DEVICE, the DMP is required to send deviceIds. If uidType is COOKIE, the DMP is required to send the cookie ids.",
+            "enum" : [ "COOKIE", "DEVICE", "ANY" ]
+          }
+        },
+        "description" : "General settings that are configured at the integration level."
+      },
+      "DataProviderURLTypeSwagger" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "description" : "ID of URL type",
+            "format" : "int32"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "URL type name (e.g., SYNC_UP_URL, DATA_TRANSFER_URL)"
+          }
+        },
+        "description" : "Type of the URL like image, javascript, and iframe. Please see below table for object structure."
+      },
+      "Account" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "PUBLISHER", "DATA_PROVIDER_CLIENT", "BUYER", "DEMAND_PARTNER" ]
+          },
+          "clientId" : {
+            "type" : "string"
+          },
+          "accountTypeId" : {
+            "type" : "integer",
+            "format" : "int64",
+            "writeOnly" : true
+          }
+        }
+      },
+      "DataProvider" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "accounts" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Account"
+            }
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "fpdp" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "enabled" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "pushEnabled" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "privacyPolicyUrl" : {
+            "type" : "string"
+          },
+          "modificationTime" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "creationTime" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "visible" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "dataProviderPixels" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/DataProviderPixel"
+            }
+          },
+          "organizationId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "dataProviderOrganization" : {
+            "$ref" : "#/components/schemas/DataProviderOrganization"
+          },
+          "dataProviderSettings" : {
+            "$ref" : "#/components/schemas/DataProviderSettings"
+          },
+          "segmentCount" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "SIMPLE", "PIXEL", "CUSTOM" ]
+          },
+          "category" : {
+            "type" : "string",
+            "enum" : [ "THIRD_PARTY_AUDIENCE", "SELLER_DEFINED_AUDIENCE", "CONTEXTUAL_AUDIENCE" ]
+          },
+          "typeId" : {
+            "type" : "integer",
+            "format" : "int64",
+            "writeOnly" : true
+          },
+          "categoryId" : {
+            "type" : "integer",
+            "format" : "int32",
+            "writeOnly" : true
+          }
+        }
+      },
+      "DataProviderOrganization" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "privacyPolicyUrl" : {
+            "type" : "string"
+          }
+        }
+      },
+      "DataProviderPixel" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "dataProviderId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "url" : {
+            "type" : "string"
+          },
+          "frequency" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "pixelType" : {
+            "$ref" : "#/components/schemas/PixelType"
+          },
+          "urlType" : {
+            "$ref" : "#/components/schemas/URLType"
+          }
+        }
+      },
+      "DataProviderSettings" : {
+        "type" : "object",
+        "properties" : {
+          "dataProviderId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "dataProviderName" : {
+            "type" : "string"
+          },
+          "monitoringEnabled" : {
+            "type" : "string",
+            "enum" : [ "TRUE", "FALSE" ]
+          },
+          "sharePermission" : {
+            "type" : "string",
+            "enum" : [ "NONE", "ALL_BUYERS_DSPS", "ALL_PUBLISHERS", "ALL" ]
+          },
+          "uidType" : {
+            "type" : "string",
+            "enum" : [ "COOKIE", "DEVICE", "ANY" ]
+          },
+          "monitoringTimestamp" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "enableMonitoringTimestamp" : {
+            "type" : "boolean"
+          },
+          "monitoringEnabledInt" : {
+            "type" : "integer",
+            "format" : "int32",
+            "writeOnly" : true
+          },
+          "sharePermissionInt" : {
+            "type" : "integer",
+            "format" : "int32",
+            "writeOnly" : true
+          },
+          "uidTypeInt" : {
+            "type" : "integer",
+            "format" : "int32",
+            "writeOnly" : true
+          }
+        }
+      },
+      "PixelType" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        }
+      },
+      "URLType" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        }
+      },
+      "DataProviderRequestCreateSwagger" : {
+        "required" : [ "category", "dataProviderSettings", "name", "organizationId" ],
+        "type" : "object",
+        "properties" : {
+          "accounts" : {
+            "type" : "array",
+            "description" : "This refers to the account linked to this data provider. It's an array; however, for the data provider create/update request, only the first record is considered.",
+            "items" : {
+              "$ref" : "#/components/schemas/DataProviderAccountSwagger"
+            }
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "Name of the data provider."
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "Category of the audience. All audiences that are allowed to be created will match the category of the dataProviderId. Seller Defined Audiences are limited to only one per dataProviderId.",
+            "enum" : [ "THIRD_PARTY_AUDIENCE", "SELLER_DEFINED_AUDIENCE", "CONTEXTUAL_AUDIENCE" ]
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "Description of the data provider."
+          },
+          "fpdp" : {
+            "type" : "integer",
+            "description" : "This flag that indicates if data provider is first-party or third-party. First-party data providers are registered separately for every publisher integration (e.g. Krux). Third-party data providers are registered once and this applies across all publisher integration (e.g. Lotame).",
+            "format" : "int32"
+          },
+          "enabled" : {
+            "type" : "integer",
+            "description" : "This flag indicates whether the data provider is enabled or not.",
+            "format" : "int32",
+            "default" : 0
+          },
+          "pushEnabled" : {
+            "type" : "integer",
+            "description" : "This flag stores the ingestion status for the data provider. 1 = all HTTP requests for this DPID will be accepted, 0 = HTTP requests sent by third-party data providers will not be ingested",
+            "format" : "int32",
+            "default" : 0
+          },
+          "dataProviderPixels" : {
+            "type" : "array",
+            "description" : "List of data provider pixels. Pixels can be UID sync-up pixel and data transfer pixel.",
+            "items" : {
+              "$ref" : "#/components/schemas/DataProviderPixelSwagger"
+            }
+          },
+          "dataProviderOrganization" : {
+            "$ref" : "#/components/schemas/DataProviderOrganizationSwagger"
+          },
+          "dataProviderSettings" : {
+            "$ref" : "#/components/schemas/DataProviderSettingsSwagger"
+          },
+          "organizationId" : {
+            "type" : "integer",
+            "description" : "The id of the organization under which the data provider is being created.",
+            "format" : "int64"
+          }
+        }
+      },
+      "AccountSwagger" : {
+        "required" : [ "id", "type" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "description" : "Id of the account with which to share the audience. Pass 0 to share the audience with all accounts of the account type",
+            "format" : "int32"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "PubMatic account type",
+            "example" : "PUBLISHER",
+            "enum" : [ "PUBLISHER", "BUYER", "DEMAND_PARTNER" ]
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "Account name.",
+            "readOnly" : true
+          }
+        },
+        "description" : "A list of objects containing information about the account with which the audience will be shared (accountID, accountType, and dataProviderID)."
+      },
+      "DataProviderRequestUpdateSwagger" : {
+        "required" : [ "privacyPolicyUrl" ],
+        "type" : "object",
+        "properties" : {
+          "privacyPolicyUrl" : {
+            "type" : "string",
+            "description" : "If the data provider is included in a universal pixel being created, then the privacyPolicyUrl of the data provider must be Accepted in order to proceed with the universal pixel creation."
+          },
+          "accounts" : {
+            "type" : "array",
+            "description" : "This refers to the account linked to this data provider. It's an array; however, for the data provider create/update request, only the first record is considered.",
+            "items" : {
+              "$ref" : "#/components/schemas/AccountSwagger"
+            }
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "Name of the data provider."
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "Description of the data provider."
+          },
+          "fpdp" : {
+            "type" : "integer",
+            "description" : "This flag that indicates if data provider is first-party or third-party. First-party data providers are registered separately for every publisher integration (e.g. Krux). Third-party data providers are registered once and this applies across all publisher integration (e.g. Lotame).",
+            "format" : "int32"
+          },
+          "enabled" : {
+            "type" : "integer",
+            "description" : "This flag indicates whether the data provider is enabled or not.",
+            "format" : "int32",
+            "default" : 0
+          },
+          "pushEnabled" : {
+            "type" : "integer",
+            "description" : "This flag stores the ingestion status for the data provider. 1 = all HTTP requests for this DPID will be accepted, 0 = HTTP requests sent by third-party data providers will not be ingested",
+            "format" : "int32",
+            "default" : 0
+          },
+          "dataProviderPixels" : {
+            "type" : "array",
+            "description" : "List of data provider pixels. Pixels can be UID sync-up pixel and data transfer pixel.",
+            "items" : {
+              "$ref" : "#/components/schemas/DataProviderPixelSwagger"
+            }
+          },
+          "dataProviderSettings" : {
+            "$ref" : "#/components/schemas/DataProviderSettingsSwagger"
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "Category of the audience. All audiences that are allowed to be created will match the category of the dataProviderId. Seller Defined Audiences are limited to only one per dataProviderId.",
+            "enum" : [ "THIRD_PARTY_AUDIENCE", "SELLER_DEFINED_AUDIENCE", "CONTEXTUAL_AUDIENCE" ]
+          },
+          "organizationId" : {
+            "type" : "integer",
+            "description" : "The id of the organization under which the data provider is being created.",
+            "format" : "int64"
+          }
+        }
+      },
+      "ShareAudience" : {
+        "required" : [ "accountId", "accountType" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "description" : "Audience name."
+          },
+          "accountId" : {
+            "type" : "integer",
+            "description" : "The ID of your PubMatic account. Find your PubMatic account ID at the upper-right corner of the Media Buyer Console (MBC) UI under ID.",
+            "format" : "int64"
+          },
+          "accountType" : {
+            "type" : "string",
+            "description" : "PubMatic account type",
+            "example" : "PUBLISHER",
+            "enum" : [ "PUBLISHER", "BUYER", "DEMAND_PARTNER" ]
+          },
+          "dataProviderId" : {
+            "type" : "string",
+            "description" : "PubMatic's unique identifier for the provider who supplies the data for an audience. You can find the DPID on the PubMatic platform under Audience > Audience Settings."
+          }
+        },
+        "description" : "This object contains information about the audience’s ID (PubMatic ID), as well as the audience owner (accountId, accountType, and dataProviderId)."
+      },
+      "SharedAudienceSwagger" : {
+        "required" : [ "deleted" ],
+        "type" : "object",
+        "properties" : {
+          "audience" : {
+            "$ref" : "#/components/schemas/ShareAudience"
+          },
+          "account" : {
+            "$ref" : "#/components/schemas/AccountSwagger"
+          },
+          "deleted" : {
+            "type" : "string",
+            "description" : "Pass TRUE to delete the sharing entry. Pass FALSE (default) to continue sharing the audience.",
+            "enum" : [ "TRUE", "FALSE" ]
+          }
+        }
+      },
+      "SharedAudience" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "audience" : {
+            "$ref" : "#/components/schemas/Audience"
+          },
+          "account" : {
+            "$ref" : "#/components/schemas/Account"
+          },
+          "ecpm" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "deleted" : {
+            "type" : "string",
+            "enum" : [ "TRUE", "FALSE" ]
+          },
+          "deletedId" : {
+            "type" : "integer",
+            "format" : "int32",
+            "writeOnly" : true
+          }
+        }
+      },
+      "PageSupporterSharedAudience" : {
+        "type" : "object",
+        "properties" : {
+          "metaData" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "object"
+            }
+          },
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SharedAudience"
+            }
+          }
+        }
+      },
+      "SharedAudienceCriteriaSwagger" : {
+        "required" : [ "audienceId", "ownerAccountId", "ownerAccountType" ],
+        "type" : "object",
+        "properties" : {
+          "audienceId" : {
+            "type" : "integer",
+            "description" : "Unique identifier of the account for an audience on PubMatic's platform (not Source Audience ID).",
+            "format" : "int32"
+          },
+          "ownerAccountId" : {
+            "type" : "string",
+            "description" : "Your account ID on PubMatic's platform. (You can find your account ID at the top-right of the Media Buyer Console (MBC) UI under ID.)"
+          },
+          "ownerAccountType" : {
+            "type" : "string",
+            "description" : "PubMatic account type",
+            "example" : "PUBLISHER",
+            "enum" : [ "PUBLISHER", "BUYER", "DEMAND_PARTNER" ]
+          },
+          "pageSize" : {
+            "type" : "integer",
+            "description" : "The maximum number of rows to be included in the response.",
+            "format" : "int32",
+            "default" : 100000
+          },
+          "pageNumber" : {
+            "type" : "integer",
+            "description" : "Page number to fetch in the case of multiple pages.",
+            "format" : "int32",
+            "default" : 1
+          }
+        }
+      }
+    }
+  }
+}

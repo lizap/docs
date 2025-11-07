@@ -18,14 +18,9 @@
             "pages": [
               "index",
               "quickstart",
-              "development"
-            ]
-          },
-          {
-            "group": "PubMatic test",
-            "pages": [
-              "testdocs/Rich-Test",
-              "testdocs/liza-test/lpfromscratch"
+              "development",
+              "Rich-Test"
+              
             ]
           },
           {
