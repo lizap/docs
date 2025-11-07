@@ -22,6 +22,13 @@
             ]
           },
           {
+            "group": "PubMatic test",
+            "pages": [
+              "Rich-test",
+              "lpfromscratch"
+            ]
+          },
+          {
             "group": "Customization",
             "pages": [
               "essentials/settings",
