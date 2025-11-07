@@ -20,7 +20,14 @@
               "quickstart",
               "development",
               "Rich-Test"
-              
+            ]
+          },
+          {
+            "group": "Alternate path",
+            "pages": [
+              "testdocs/Rich-Test",
+              "testdocs/liza-test/localclone-test",
+              "testdocs/liza-test/lpfromscratch"
             ]
           },
           {
