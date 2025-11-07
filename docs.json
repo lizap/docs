@@ -24,8 +24,8 @@
           {
             "group": "PubMatic test",
             "pages": [
-              "Rich-test",
-              "lpfromscratch"
+              "testdocs/Rich-test",
+              "testdocs/liza-test/lpfromscratch"
             ]
           },
           {
